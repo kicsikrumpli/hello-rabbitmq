@@ -19,6 +19,7 @@ class Producer(ReconnectingRabbitChannel):
         self.mailbox = queue.Queue()
         self.queue_name = queue_name
         self.is_daemon = False
+        self.queue_timeout_s = 30
 
     @property
     def exchange(self):
@@ -32,13 +33,17 @@ class Producer(ReconnectingRabbitChannel):
         channel.queue_declare(queue=self.queue_name, durable=True)
         while True:
             message: bytes
-            message = self.mailbox.get()
-            channel.basic_publish(
-                exchange=self.exchange,
-                routing_key=self.routing_key,
-                body=message,
-                properties=self.PERSISTENT
-            )
+            try:
+                message = self.mailbox.get(timeout=self.queue_timeout_s)
+                channel.basic_publish(
+                    exchange=self.exchange,
+                    routing_key=self.routing_key,
+                    body=message,
+                    properties=self.PERSISTENT
+                )
+            except queue.Empty as e:
+                print('queue timeout...')
+                time.sleep(0)
 
     def publish(self, message: bytes):
         self.mailbox.put(message)

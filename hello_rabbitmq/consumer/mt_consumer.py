@@ -14,8 +14,8 @@ class Consumer(ReconnectingRabbitChannel):
         super().__init__(host, port)
         self.queue_name = queue_name
 
-    @staticmethod
     def on_message_callback(
+            self,
             channel: BlockingChannel,
             method: spec.Basic.Deliver,
             properties: BasicProperties,

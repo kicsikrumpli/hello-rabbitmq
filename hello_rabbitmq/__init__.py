@@ -5,6 +5,7 @@ from pika.adapters.blocking_connection import BlockingChannel
 QUEUE_NAME = 'test'
 HOST = 'broker'
 PORT = 5672
+CONN_STR = 'postgresql://postgres:pass@postgres:5432'
 
 
 # common queue declare
