@@ -8,13 +8,13 @@ WORKDIR /bunny
 COPY hello_rabbitmq hello_rabbitmq
 COPY poetry.lock .
 COPY pyproject.toml .
-COPY entrypoint.sh
+COPY entrypoint.sh .
 
 # set up poetry
 RUN pip install poetry
 RUN poetry install
 
-ENTRYPOINT ./entrypoint.sh
+ENTRYPOINT [ "./entrypoint.sh" ]
 
 
 

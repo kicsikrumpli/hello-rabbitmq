@@ -1,0 +1,52 @@
+version: '3.9'
+services:
+  producer:
+    build: .
+    image: kicsikrumpli/rabbit
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - broker
+    command: [ 'producer' ]
+    networks:
+      - producer-nw
+
+  consumer:
+    build: .
+    image: kicsikrumpli/rabbit
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - broker
+    command: [ 'consumer' ]
+    networks:
+      - consumer-nw
+
+  broker:
+    image: rabbitmq:3-management
+    hostname: broker
+    ports:
+      - "8080:15672"
+      - "5672:5672"
+    networks:
+      producer-nw:
+      consumer-nw:
+
+  db:
+    image: postgres
+    hostname: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASSWORD=pass"
+    networks:
+      consumer-nw:
+    volumes:
+      - "./postgres:/docker-entrypoint-initdb.d"
+
+networks:
+  producer-nw:
+    name: producer network
+  consumer-nw:
+    name: consumer network

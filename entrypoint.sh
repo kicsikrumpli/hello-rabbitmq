@@ -6,4 +6,4 @@ echo "or"
 echo "./entrypoint.sh consumer"
 echo "----"
 
-poetry run python -m hello_rabbitmq.${1}
+poetry run python -m hello_rabbitmq.$1
